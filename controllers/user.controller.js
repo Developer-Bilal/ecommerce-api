@@ -25,7 +25,7 @@ export const getUser = async (req, res) => {
 
 // POST User
 export const createUser = async (req, res) => {
-  const { email, password } = req.body;
+  const { email, password, firstName, lastName } = req.body;
   try {
     if (!email || !password) {
       return res.status(400).send({ message: "Please fill all the details" });
@@ -45,12 +45,16 @@ export const createUser = async (req, res) => {
     const user = await User.create({
       email,
       password: hashedPassword,
+      firstName,
+      lastName,
     });
     // send response
     return res.status(200).send({
       message: "User Created Successfully",
       user: {
         email,
+        firstName,
+        lastName,
       },
     });
   } catch (error) {

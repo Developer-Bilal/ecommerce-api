@@ -10,6 +10,11 @@ const productSchema = new mongoose.Schema(
     description: {
       type: String,
     },
+    code: {
+      type: String,
+      required: true,
+      unique: true,
+    },
     category: {
       type: String,
     },
@@ -30,6 +35,7 @@ const productSchema = new mongoose.Schema(
     seller: {
       type: mongoose.Schema.ObjectId,
       ref: "User",
+      required: true,
     },
     reviews: [
       {
