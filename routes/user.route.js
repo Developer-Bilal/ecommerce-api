@@ -8,7 +8,7 @@ import {
   loginUser,
   updateUser,
 } from "../controllers/user.controller.js";
-// import { authentication } from "../middlewares/auth.middleware.js";
+import { authenticated } from "../middlewares/auth.middleware.js";
 
 const router = Router();
 
@@ -18,7 +18,7 @@ router.post("/login", loginUser);
 router.post("/changePassword", changePassword);
 
 router
-  .get("/:id", getUser)
+  .get("/:id", authenticated, getUser)
   .patch("/:id", updateUser)
   .delete("/:id", deleteUser);
 
