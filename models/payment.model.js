@@ -18,11 +18,10 @@ const paymentSchema = new mongoose.Schema(
       required: true,
     },
     shippingAddress: {
-      country: String,
-      city: String,
-      zipcode: String,
-      houseNumber: String,
-      required: true,
+      country: { type: String, required: true },
+      city: { type: String, required: true },
+      zipcode: { type: String, required: true },
+      houseNumber: { type: String, required: true },
     },
   },
   {
