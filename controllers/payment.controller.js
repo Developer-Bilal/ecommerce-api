@@ -1,4 +1,5 @@
 import { Payment } from "../models/payment.model.js";
+import { stripe } from "../server.js";
 
 // GET All Payments
 export const getPayments = async (req, res) => {
@@ -70,3 +71,73 @@ export const deletePayment = async (req, res) => {
     return res.status(500).send({ message: error.message });
   }
 };
+
+// create stripe checkout session
+export const createCheckoutSession = async (req, res) => {
+  const session = await stripe.checkout.sessions.create({
+    mode: "payment",
+    shipping_address_collection: {
+      allowed_countries: ["US", "PK"],
+    },
+    success_url: `${process.env.BASE_URL}/success?session_id={CHECKOUT_SESSION_ID}`,
+    cancel_url: `${process.env.BASE_URL}`,
+    line_items: [
+      {
+        price_data: {
+          currency: "usd",
+          product_data: {
+            name: "Physics Book",
+          },
+          unit_amount: 50 * 100,
+        },
+        quantity: 1,
+      },
+      {
+        price_data: {
+          currency: "usd",
+          product_data: {
+            name: "Mathematics Book",
+          },
+          unit_amount: 100 * 100,
+        },
+        quantity: 2,
+      },
+    ],
+  });
+  res.redirect(session.url);
+};
+
+// // // checkout function
+// app.post("/checkout", async (req, res) => {
+//   const session = await stripe.checkout.sessions.create({
+//     mode: "payment",
+//     shipping_address_collection: {
+//       allowed_countries: ["US", "PK"],
+//     },
+//     success_url: `${process.env.BASE_URL}/success?session_id={CHECKOUT_SESSION_ID}`,
+//     cancel_url: `${process.env.BASE_URL}`,
+//     line_items: [
+//       {
+//         price_data: {
+//           currency: "usd",
+//           product_data: {
+//             name: "Physics Book",
+//           },
+//           unit_amount: 50 * 100,
+//         },
+//         quantity: 1,
+//       },
+//       {
+//         price_data: {
+//           currency: "usd",
+//           product_data: {
+//             name: "Mathematics Book",
+//           },
+//           unit_amount: 100 * 100,
+//         },
+//         quantity: 2,
+//       },
+//     ],
+//   });
+//   res.redirect(session.url);
+// });

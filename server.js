@@ -9,7 +9,7 @@ import reviewRouter from "./routes/review.route.js";
 import { config } from "dotenv";
 config();
 import Stripe from "stripe";
-const stripe = new Stripe(process.env.STRIPE_API_SECRET);
+export const stripe = new Stripe(process.env.STRIPE_API_SECRET);
 
 const app = express();
 const port = process.env.PORT || 3000;
@@ -33,39 +33,6 @@ app.get("/success", async (req, res) => {
   res.render("success.ejs");
 });
 
-app.post("/checkout", async (req, res) => {
-  const session = await stripe.checkout.sessions.create({
-    mode: "payment",
-    shipping_address_collection: {
-      allowed_countries: ["US", "PK"],
-    },
-    success_url: `${process.env.BASE_URL}/success?session_id={CHECKOUT_SESSION_ID}`,
-    cancel_url: `${process.env.BASE_URL}`,
-    line_items: [
-      {
-        price_data: {
-          currency: "usd",
-          product_data: {
-            name: "Physics Book",
-          },
-          unit_amount: 50 * 100,
-        },
-        quantity: 1,
-      },
-      {
-        price_data: {
-          currency: "usd",
-          product_data: {
-            name: "Mathematics Book",
-          },
-          unit_amount: 100 * 100,
-        },
-        quantity: 2,
-      },
-    ],
-  });
-  res.redirect(session.url);
-});
 // routes
 app.use("/api/v1/users", userRouter);
 app.use("/api/v1/products", productRouter);

@@ -1,5 +1,6 @@
 import { Router } from "express";
 import {
+  createCheckoutSession,
   createPayment,
   deletePayment,
   getPayment,
@@ -10,6 +11,8 @@ import {
 const router = Router();
 
 router.get("/", getPayments).post("/", createPayment);
+
+router.post("/checkout", createCheckoutSession);
 
 router
   .get("/:id", getPayment)
