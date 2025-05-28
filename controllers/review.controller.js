@@ -24,12 +24,13 @@ export const getReview = async (req, res) => {
 // POST Review
 export const createReview = async (req, res) => {
   //
-  const { text, stars, reviewer } = req.body;
+  const { text, stars, reviewer, productReviewed } = req.body;
   try {
     const review = await Review.create({
       text,
       stars,
       reviewer,
+      productReviewed,
     });
 
     // send response
@@ -45,12 +46,13 @@ export const createReview = async (req, res) => {
 // PATCH Review
 export const updateReview = async (req, res) => {
   const { id } = req.params;
-  const { text, stars, reviewer } = req.body;
+  const { text, stars, reviewer, productReviewed } = req.body;
   try {
     const review = await Review.findByIdAndUpdate(id, {
       text,
       stars,
       reviewer,
+      productReviewed,
     });
     return res.status(200).send({ message: "Review Updated" });
   } catch (error) {
