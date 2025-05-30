@@ -1,5 +1,6 @@
 import express from "express";
 import mongoose from "mongoose";
+import cors from "cors";
 import userRouter from "./routes/user.route.js";
 import productRouter from "./routes/product.route.js";
 import cartRouter from "./routes/cart.route.js";
@@ -18,6 +19,7 @@ app.set("view engine", "ejs");
 
 // middlewares
 app.use(express.json());
+app.use(cors());
 
 // home route
 app.get("/", (req, res) => {

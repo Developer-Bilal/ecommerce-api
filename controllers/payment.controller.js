@@ -1,3 +1,4 @@
+import { Cart } from "../models/cart.model.js";
 import { Payment } from "../models/payment.model.js";
 import { stripe } from "../server.js";
 
@@ -24,24 +25,61 @@ export const getPayment = async (req, res) => {
 
 // POST Payment
 export const createPayment = async (req, res) => {
-  //
-  const { cartDetails, totalAmount, status, shippingAddress } = req.body;
-  try {
-    const payment = await Payment.create({
-      cartDetails,
-      totalAmount,
-      status,
-      shippingAddress,
-    });
+  let cartDetails = "682ead13615f093b7fd7ad34";
 
-    // send response
-    return res.status(200).send({
-      message: "Payment Created",
-      payment,
+  let shippingAddress = {
+    country: "test",
+    city: "test",
+    zipcode: "test",
+    AddressLine: "test",
+  };
+  // find cart from cartDetails
+  // calculate total amount and save in a variable totalAmountCalculated (in future totalAmountCalculated should equal totalAmount from frontend)
+  // create checkout using stripe
+  // if successful then create order/payment
+  ///////////
+  // find cart details
+  const cart = await Cart.findOne({ _id: cartDetails }).populate(
+    "items.product"
+  );
+  // calculate total amount
+  let totalAmountCalculated = 0;
+  cart.items.map((item) => {
+    totalAmountCalculated += item.product.price;
+  });
+  // console.log(totalAmountCalculated);
+
+  // create stripe checkout
+  let cartItems = [];
+  cart.items.map((item) => {
+    // add each item to cartItems in a stripe accepted structure
+    cartItems.push({
+      price_data: {
+        currency: "usd",
+        product_data: {
+          name: item.product.name,
+        },
+        unit_amount: item.product.price * 100,
+      },
+      quantity: item.quantity,
     });
-  } catch (error) {
-    return res.status(500).send({ message: error.message });
-  }
+  });
+
+  const session = await stripe.checkout.sessions.create({
+    mode: "payment",
+    success_url: `${process.env.BASE_URL}/success`,
+    cancel_url: `${process.env.BASE_URL}`,
+    line_items: cartItems,
+  });
+  // save payment data before redirecting
+
+  await Payment.create({
+    cartDetails,
+    shippingAddress,
+    totalAmount: totalAmountCalculated,
+  });
+  // redirect the user
+  res.redirect(session.url);
 };
 
 // PATCH Payment

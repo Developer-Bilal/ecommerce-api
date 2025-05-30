@@ -21,7 +21,7 @@ const paymentSchema = new mongoose.Schema(
       country: { type: String, required: true },
       city: { type: String, required: true },
       zipcode: { type: String, required: true },
-      houseNumber: { type: String, required: true },
+      AddressLine: { type: String, required: true },
     },
   },
   {
