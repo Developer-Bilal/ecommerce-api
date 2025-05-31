@@ -6,14 +6,20 @@ import {
   getCarts,
   updateCart,
 } from "../controllers/cart.controller.js";
+import {
+  authenticated,
+  isAdminAuthenticated,
+} from "../middlewares/auth.middleware.js";
 
 const router = Router();
 
-router.get("/", getCarts).post("/", createCart);
+router
+  .get("/", isAdminAuthenticated, getCarts)
+  .post("/", authenticated, createCart);
 
 router
-  .get("/:id", getCart)
-  .patch("/:id", updateCart)
-  .delete("/:id", deleteCart);
+  .get("/:id", authenticated, getCart)
+  .patch("/:id", authenticated, updateCart)
+  .delete("/:id", authenticated, deleteCart);
 
 export default router;

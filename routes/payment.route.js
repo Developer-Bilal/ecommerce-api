@@ -7,16 +7,22 @@ import {
   getPayments,
   updatePayment,
 } from "../controllers/payment.controller.js";
+import {
+  authenticated,
+  isAdminAuthenticated,
+} from "../middlewares/auth.middleware.js";
 
 const router = Router();
 
-router.get("/", getPayments).post("/", createPayment);
+router
+  .get("/", isAdminAuthenticated, getPayments)
+  .post("/", authenticated, createPayment);
 
-router.post("/checkout", createCheckoutSession);
+// router.post("/checkout", createCheckoutSession);
 
 router
-  .get("/:id", getPayment)
-  .patch("/:id", updatePayment)
-  .delete("/:id", deletePayment);
+  .get("/:id", isAdminAuthenticated, getPayment)
+  .patch("/:id", isAdminAuthenticated, updatePayment)
+  .delete("/:id", isAdminAuthenticated, deletePayment);
 
 export default router;

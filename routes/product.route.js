@@ -6,14 +6,15 @@ import {
   getProducts,
   updateProduct,
 } from "../controllers/product.controller.js";
+import { isSellerAuthenticated } from "../middlewares/auth.middleware.js";
 
 const router = Router();
 
-router.get("/", getProducts).post("/", createProduct);
+router.get("/", getProducts).post("/", isSellerAuthenticated, createProduct);
 
 router
   .get("/:id", getProduct)
-  .patch("/:id", updateProduct)
-  .delete("/:id", deleteProduct);
+  .patch("/:id", isSellerAuthenticated, updateProduct)
+  .delete("/:id", isSellerAuthenticated, deleteProduct);
 
 export default router;

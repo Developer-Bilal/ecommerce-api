@@ -66,6 +66,11 @@ export const createUser = async (req, res) => {
 export const updateUser = async (req, res) => {
   const { id } = req.params;
   const { email } = req.body;
+
+  if (req.user.email !== email) {
+    return res.status(404).send({ message: `You are not authorized!` });
+  }
+
   try {
     // update user data and push roadmapId, videoId in the array
     const user = await User.findByIdAndUpdate(id, {
@@ -93,6 +98,7 @@ export const loginUser = async (req, res) => {
   const { email, password } = req.body;
   try {
     const user = await User.findOne({ email });
+    console.log(user);
     if (!user) {
       return res.status(404).send({ message: "Invalid Credentials!" });
     }
@@ -102,9 +108,18 @@ export const loginUser = async (req, res) => {
       return res.status(404).send({ message: "Invalid Credentials!" });
     }
     //
-    const token = jwt.sign({ email: email }, process.env.JWT_SECRET, {
-      expiresIn: "1h",
-    });
+    const token = jwt.sign(
+      {
+        email: user.email,
+        isAdmin: user.isAdmin,
+        isSeller: user.isSeller,
+        username: user.username,
+      },
+      process.env.JWT_SECRET,
+      {
+        expiresIn: "1h",
+      }
+    );
 
     return res.status(200).send({ message: "Login Success!", email, token });
   } catch (error) {

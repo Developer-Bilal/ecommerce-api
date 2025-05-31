@@ -9,6 +9,21 @@ const userSchema = new mongoose.Schema(
       lowercase: true,
       trim: true,
     },
+    username: {
+      type: String,
+      required: true,
+      unique: true,
+      lowercase: true,
+      trim: true,
+    },
+    isAdmin: {
+      type: Boolean,
+      default: false,
+    },
+    isSeller: {
+      type: Boolean,
+      default: false,
+    },
     password: {
       type: String,
       required: true,
